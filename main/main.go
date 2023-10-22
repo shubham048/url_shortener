@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/shubham048/urlshort"
+	handler "github.com/shubham048/url_shortener/handler"
 )
 
 func main() {
