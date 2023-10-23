@@ -2,6 +2,8 @@ package handler
 
 import (
 	"net/http"
+
+	yaml "gopkg.in/yaml.v2"
 )
 
 // MapHandler will return an http.HandlerFunc (which also
@@ -11,15 +13,15 @@ import (
 // If the path is not provided in the map, then the fallback
 // http.Handler will be called instead.
 func MapHandler(pathsToUrls map[string]string, fallback http.Handler) http.HandlerFunc {
-	return func(w http.ResponseWriter,r *http.Request){
-		//if a path exist redirect to it 
-		path :=r.URL.Path
-		if dest,ok:=pathsToUrls[path]; ok {
-			http.Redirect(w,r,dest,http.StatusFound)
+	return func(w http.ResponseWriter, r *http.Request) {
+		//if a path exist redirect to it
+		path := r.URL.Path
+		if dest, ok := pathsToUrls[path]; ok {
+			http.Redirect(w, r, dest, http.StatusFound)
 			return
 		}
 		//else use default
-		fallback.ServeHTTP(w,r)
+		fallback.ServeHTTP(w, r)
 	}
 }
 
@@ -40,6 +42,20 @@ func MapHandler(pathsToUrls map[string]string, fallback http.Handler) http.Handl
 // See MapHandler to create a similar http.HandlerFunc via
 // a mapping of paths to urls.
 func YAMLHandler(yml []byte, fallback http.Handler) (http.HandlerFunc, error) {
-	// TODO: Implement this...
-	return nil, nil
+	pathUrl := []PathUrl{}
+	err := yaml.Unmarshal(yml, &pathUrl)
+	if err != nil {
+		return nil, err
+	}
+	mapURL := map[string]string{}
+	for _, val := range pathUrl {
+		mapURL[val.Path] = val.URL
+	}
+	return MapHandler(mapURL, fallback), nil
+
+}
+
+type PathUrl struct {
+	Path string
+	URL  string
 }

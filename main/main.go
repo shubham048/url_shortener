@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	handler "github.com/shubham048/url_shortener/handler"
+	handler "github.com/shubham048/url_shortener"
 )
 
 func main() {
@@ -15,17 +15,17 @@ func main() {
 		"/urlshort-godoc": "https://godoc.org/github.com/gophercises/urlshort",
 		"/yaml-godoc":     "https://godoc.org/gopkg.in/yaml.v2",
 	}
-	mapHandler := urlshort.MapHandler(pathsToUrls, mux)
+	mapHandler := handler.MapHandler(pathsToUrls, mux)
 
-	// Build the YAMLHandler using the mapHandler as the
-	// fallback
+	//Build the YAMLHandler using the mapHandler as the
+	//fallback
 	yaml := `
-- path: /urlshort
-  url: https://github.com/gophercises/urlshort
-- path: /urlshort-final
-  url: https://github.com/gophercises/urlshort/tree/solution
-`
-	yamlHandler, err := urlshort.YAMLHandler([]byte(yaml), mapHandler)
+	- path: /urlshort
+	  url: https://github.com/gophercises/urlshort
+	- path: /urlshort-final
+	  url: https://github.com/gophercises/urlshort/tree/solution
+	`
+	yamlHandler, err := handler.YAMLHandler([]byte(yaml), mapHandler)
 	if err != nil {
 		panic(err)
 	}
